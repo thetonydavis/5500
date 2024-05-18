@@ -27,11 +27,12 @@ def hello_world():
 @app.route('/token')
 def token():
     try:
-        token = os.getenv('ya29.c.c0AY_VpZidQaNUBEbE7OjLy0zHwtS7VTx5mEImTA-mqzNQRLFi8ZXb6BheCW7c4a1xnKpO_qYxrlR6Bhfo8BIxbdpEx-xgWcgKZ1H8Q6VK_NTXa0WmGlc8ujnNsxtPUlJBVqs-15gvQ9Ia82b3OXsbMhKh9Ksz5HcTGURY0esHPmqVuXM87WZG1Ly_JfiVOAbzPaUHZj_LL_l2sXAYais7C3Ulr4RFGLPsFlcKdclz9FuS9cOLCnykXuaDiJst5wpCihoa4IIM1YvoPVPx6JH2BCejCO8cR5mstokylrCGEOal6wqOELw5wSqhKi2xRROGwRBIGBkUUAzQTC_cUT1JSCwhnFlLSZYhCwDPzxsMHR4nBhZJBVST_ecH384P3hRBR4l-ZXlBfJSBVly4S-hhe1i2v96Jvy_3kXS_cereFQXr6-xtzFRmwnfaQf2pUtxyjIOxyaU-Zzk1-Mhjciicx409gSqM5JZBf6SSYVSMVo0R3_g_a9fVm4mQ4yVSfYfSas2oXZXZecSyd-hvcRZIRXfVkcXfq6gv5sM6Wbzl3XR4fMl0whvfb7sR7jvyB--Rzc9JoIf9X_fQipo8xcUXiwnU0FmQZv3u2ft8bz8MOoRZ3kek71m0X-jSmUv7-aOy6MZoS2dvcXyUUo9q9ca9-cqd7MVfsltIb2W9ob7X2iV0j1ytMtyvtcdby8o4F-zpYglOrg0V_F-tyFemf5rOltFk5ft7eouQ2FgQ8nWVapnQQ5oZUyka5rxbMUQVyqtZbtr4QR10qXsRvzjfV7ob6edZ3UZ6QOIJU93maw_4WBn9eum6qfWWhJwO6Ohko_I72o4l2vb1mIt3hO9RqWrBeFthxgrkBlVI1sFn6BWObeY51FXrmmpRIWvnJoIhz4-qkYQxl8JZYs5ZwZfWfbh2k4B24g5pFjWR1b5lwQywSS6fvuvmYwrrbIqQl1MXwuVwhX-ry5JhBjX03pbItsikwiVvWfJ1VkvXJw181F_304l1qr67yjyf0kd')
+        token = os.getenv('API_TOKEN')
         if not token:
             raise ValueError("Token not found in environment variables")
         return jsonify({"token": token})
     except Exception as e:
+        app.logger.error(f"Error fetching token: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
