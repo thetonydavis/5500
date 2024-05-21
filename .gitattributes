@@ -20,3 +20,5 @@
 *.png binary
 *.gif binary
 *.pdf binary
+
+service_account_key.json
