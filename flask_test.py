@@ -20,7 +20,7 @@ service_account_info = {
     "type": "service_account",
     "project_id": os.getenv('GCP_PROJECT_ID', 'default_project_id'),
     "private_key_id": os.getenv('GCP_PRIVATE_KEY_ID', 'default_private_key_id'),
-    "private_key": gcp_private_key.replace("\\n", "\n"),
+    "private_key": gcp_private_key.replace("\n", "\n"),
     "client_email": os.getenv('GCP_CLIENT_EMAIL', 'default_client_email'),
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
     "token_uri": "https://oauth2.googleapis.com/token",
@@ -86,7 +86,7 @@ def bigquery_query():
                 _5500_link, 
                 Plan_Name
             )) AS formatted_json 
-            FROM `waivz-404004.form_5500_2022`.`2022 Production` 
+            FROM `waivz-404004.form_5500_2022.2022 Production`
             WHERE EIN = @ein
         """
 
@@ -112,7 +112,7 @@ def custom_query():
     try:
         data = request.get_json(silent=True)
         query = data.get('query') if data else None
-        
+
         if not query:
             return jsonify({"error": "No query provided"}), 400
 
@@ -129,6 +129,3 @@ def custom_query():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
-
-
-
