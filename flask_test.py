@@ -1,14 +1,15 @@
+import os  # Importing the os module
 import logging
-import requests
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify, request
 from google.oauth2 import service_account
 from google.cloud import bigquery
+
+# Create the Flask application object
+app = Flask(__name__)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-app = Flask(__name__)
 
 # Check and load environment variables
 gcp_private_key = os.getenv('GCP_PRIVATE_KEY')
