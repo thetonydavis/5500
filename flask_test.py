@@ -1,5 +1,6 @@
 import os  # Importing the os module
 import logging
+import json
 from flask import Flask, jsonify, request
 from google.oauth2 import service_account
 from google.cloud import bigquery
@@ -104,7 +105,7 @@ def bigquery_query():
         )
 
         query_job = client.query(query, job_config=job_config)
-        results = [dict(row) for row in query_job.result()]
+        results = [json.loads(row['formatted_json']) for row in query_job.result()]
 
         return jsonify(results)
     except ValueError as ve:
