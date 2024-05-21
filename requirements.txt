@@ -1,6 +1,7 @@
 Flask==2.1.0
 google-cloud-bigquery==3.23.0
-google-auth==1.35.0
+google-auth==2.14.3
 gunicorn==20.1.0
+
 
 
