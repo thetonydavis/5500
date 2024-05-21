@@ -1,0 +1,22 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Explicitly declare text files you want to always be normalized and converted to native line endings on checkout.
+*.c text
+*.h text
+*.cpp text
+*.py text
+*.java text
+
+# Declare files that will always have LF line endings on checkout.
+*.sh text eol=lf
+*.txt text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Binary files should be stored without any conversion
+*.jpg binary
+*.png binary
+*.gif binary
+*.pdf binary
