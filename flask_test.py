@@ -1,48 +1,13 @@
-import logging
-import os
-from flask import Flask, jsonify, request
-from google.oauth2 import service_account
-from google.cloud import bigquery
-
-app = Flask(__name__)
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Check and load environment variables
-gcp_private_key = os.getenv('GCP_PRIVATE_KEY')
-if not gcp_private_key:
-    logger.error("GCP_PRIVATE_KEY environment variable not set")
-    raise EnvironmentError("GCP_PRIVATE_KEY environment variable not set")
-
-service_account_info = {
-    "type": "service_account",
-    "project_id": os.getenv('GCP_PROJECT_ID', 'default_project_id'),
-    "private_key_id": os.getenv('GCP_PRIVATE_KEY_ID', 'default_private_key_id'),
-    "private_key": gcp_private_key.replace("\\n", "\n"),
-    "client_email": os.getenv('GCP_CLIENT_EMAIL', 'default_client_email'),
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": os.getenv('GCP_CLIENT_X509_CERT_URL', 'default_client_x509_cert_url')
-}
-
-credentials = service_account.Credentials.from_service_account_info(service_account_info)
-
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
-
 @app.route('/bigquery', methods=['POST'])
 def bigquery_query():
     try:
         data = request.get_json()
+        logger.info(f"Received data: {data}")
         ein = data.get('ein')
         if not ein:
             raise ValueError("EIN not provided in the request")
 
-        client = bigquery.Client(credentials=credentials, project=credentials.project_id)
+        # Correcting the table name with backticks to handle the space
         query = """
             SELECT TO_JSON_STRING(STRUCT(
                 Plan_Year_Begin_Date, 
@@ -86,7 +51,7 @@ def bigquery_query():
                 _5500_link, 
                 Plan_Name
             )) AS formatted_json 
-            FROM `waivz-404004.form_5500_2022.2022_Production`
+            FROM `waivz-404004.form_5500_2022`.`2022 Production`
             WHERE EIN = CAST(@ein AS INT64)
         """
 
@@ -106,26 +71,3 @@ def bigquery_query():
     except Exception as e:
         logger.error(f"Error querying BigQuery: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
-@app.route('/custom-query', methods=['POST'])
-def custom_query():
-    try:
-        data = request.get_json(silent=True)
-        query = data.get('query') if data else None
-
-        if not query:
-            return jsonify({"error": "No query provided"}), 400
-
-        client = bigquery.Client(credentials=credentials, project=credentials.project_id)
-        query_job = client.query(query)  # Make sure the query is secure and valid
-        results = query_job.result()  # Waits for job to complete
-
-        # Convert results to a list of dicts to send back
-        rows = [dict(row) for row in results]
-        return jsonify(rows)
-    except Exception as e:
-        logger.error(f"Error querying BigQuery: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
