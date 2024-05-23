@@ -126,7 +126,9 @@ def search_by_ein():
         ein = request.args.get('ein')
         if not ein:
             return jsonify({"error": "EIN is required"}), 400
+        logger.info(f"Received EIN: {ein}")
         ein = validate_and_sanitize_ein(ein)
+        logger.info(f"Sanitized EIN: {ein}")
         query = """
         SELECT * FROM `waivz-404004.form_5500_2022.EIN_Lookup_View`
         WHERE EIN = @searchValue
@@ -138,6 +140,7 @@ def search_by_ein():
         )
         query_job = client.query(query, job_config=job_config)
         results = [dict(row) for row in query_job.result()]
+        logger.info(f"Query Results: {results}")
         formatted_results = [format_output(result) for result in results]
         return jsonify(formatted_results)
     except ValueError as ve:
@@ -154,7 +157,9 @@ def search_by_plan_name():
         state = request.args.get('state')
         if not plan_name or not state:
             return jsonify({"error": "Plan Name and State are required"}), 400
+        logger.info(f"Received Plan Name: {plan_name}, State: {state}")
         state = standardize_state(state)
+        logger.info(f"Standardized State: {state}")
         query = """
         SELECT * FROM `waivz-404004.form_5500_2022.Plan_Name_Lookup_View`
         WHERE REGEXP_CONTAINS(Plan_Name, '(?i)' || @planName)
@@ -168,6 +173,7 @@ def search_by_plan_name():
         )
         query_job = client.query(query, job_config=job_config)
         results = [dict(row) for row in query_job.result()]
+        logger.info(f"Query Results: {results}")
         formatted_results = [format_output(result) for result in results]
         return jsonify(formatted_results)
     except Exception as e:
