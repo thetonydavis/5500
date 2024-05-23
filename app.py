@@ -112,6 +112,14 @@ def format_output(data):
         ],
     }
 
+@app.route('/')
+def home():
+    return 'Flask Application is Running'
+
+@app.route('/hello')
+def hello():
+    return 'Hello, World!'
+
 @app.route('/search/ein', methods=['GET'])
 def search_by_ein():
     try:
